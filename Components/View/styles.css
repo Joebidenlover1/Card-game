@@ -51,6 +51,9 @@ button {
     cursor: pointer;
     font-size: 16px;
     margin-top: 10px;
+    display: block; /* Ensures the button takes the full width */
+    margin-left: auto; /* Center the button */
+    margin-right: auto; /* Center the button */
 }
 
 button:hover {

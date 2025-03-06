@@ -1,0 +1,17 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+.card {
+    width: 100px;
+    height: 150px;
+    border: 1px solid #000;
+    margin: 10px;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+}
+.mana {
+    margin-top: 20px;
+}

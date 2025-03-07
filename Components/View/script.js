@@ -1,4 +1,4 @@
-let mana = 0;
+let mana = 2;
 let playerHand = [];
 
 const cards = [
@@ -15,7 +15,7 @@ const cards = [
         name: "Vuurballen",
         type: "spreuk",
         cost: 3,
-        damage: 5,
+        damage: 4,
         image: "2.jpg",
         rarity: "Rare"
     },
@@ -31,11 +31,15 @@ const cards = [
         name: "Hog Rider",
         type: "wezen",
         cost: 2,
-        attack: 3,
+        attack: 2,
         image: "1.jpg",
         rarity: "Epic"
     },
 ];
+
+function updateManaDisplay() {
+    document.getElementById("mana-count").innerText = mana;
+}
 
 function drawCards() {
     playerHand = [...cards];
@@ -73,13 +77,13 @@ function playCard(index) {
     const card = playerHand[index];
     if (card.name === "Green Elixer") {
         mana += 2;
-        document.getElementById("mana-count").innerText = mana;
+        updateManaDisplay();
         alert(card.name + " gebruikt! Je krijgt 2 mana.");
         playerHand.splice(index, 1);
         displayHand();
     } else if (mana >= card.cost) {
         mana -= card.cost;
-        document.getElementById("mana-count").innerText = mana;
+        updateManaDisplay();
         alert(card.name + " gespeeld!");
         playerHand.splice(index, 1);
         displayHand();
@@ -90,7 +94,9 @@ function playCard(index) {
 
 document.getElementById("end-turn").onclick = function() {
     mana += 3;
-    document.getElementById("mana-count").innerText = mana;
+    updateManaDisplay();
 };
 
+// Initialize mana display
+updateManaDisplay();
 drawCards();

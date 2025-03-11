@@ -62,13 +62,12 @@ h1 {
 .card.epic {
     border: 2px solid #800080;
 }
-
 .card.legendary {
-    border: 4px solid transparent;
+    border: 2px solid transparent; 
     background-image: linear-gradient(white, white),
     linear-gradient(to right, lightseagreen, lightblue, pink);
     background-clip: padding-box, border-box;
-    padding: 4px;
+    padding: 0;
 }
 
 .card.common p {

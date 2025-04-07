@@ -13,6 +13,31 @@ h1 {
     margin-bottom: 20px;
 }
 
+#health-bar {
+    margin: 20px 0;
+}
+
+.health-bar {
+    width: 100%;
+    height: 25px;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.health {
+    height: 100%;
+    background-color: #4caf50; /* green color for player's health */
+    width: 100%; /* starts as full width */
+    border-radius: 5px;
+}
+
+#ai-health {
+    height: 100%;
+    background-color: #f44336; /* red color for AI's health */
+    width: 100%; /* starts as full width */
+    border-radius: 5px;
+}
+
 #player-hand {
     display: flex;
     justify-content: center;
@@ -62,8 +87,9 @@ h1 {
 .card.epic {
     border: 2px solid #800080;
 }
+
 .card.legendary {
-    border: 2px solid transparent; 
+    border: 2px solid transparent;
     background-image: linear-gradient(white, white),
     linear-gradient(to right, lightseagreen, lightblue, pink);
     background-clip: padding-box, border-box;
@@ -107,17 +133,4 @@ button {
 button:hover {
     background-color: #357abd;
     transform: scale(1.05);
-}
-
-.footer {
-    margin-top: 30px;
-    font-size: 14px;
-    color: #666;
-}
-
-@media (max-width: 600px) {
-    .card {
-        width: 90px;
-        height: 180px;
-    }
 }

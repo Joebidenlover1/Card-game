@@ -9,9 +9,22 @@
 <body>
 
 <h1>Mystic Geheimen</h1>
+<div id="health-bar">
+  <p>Speler Gezondheid: <span id="player-health-count">20</span></p>
+  <div id="player-health-bar" class="health-bar">
+    <div id="player-health" class="health"></div>
+  </div>
+</div>
+
 <div id="player-hand"></div>
 <div class="mana">Mana: <span id="mana-count">0</span></div>
 <button id="end-turn">Einde Beurt</button>
+
+<!-- AI Health Bar -->
+<div id="ai-health-bar" class="health-bar" style="background-color: #e0e0e0; margin-top: 20px;">
+  <p>A.I. Gezondheid: <span id="ai-health-count">20</span></p>
+  <div id="ai-health" class="health ai-health-green"></div>
+</div>
 
 <script src="script.js"></script>
 </body>

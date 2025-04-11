@@ -1,0 +1,80 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background: url('best-greek-mythology-9tlb3r6i5cjgnuqk.jpg') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    margin: auto;
+}
+
+h2 {
+    color: #4a90e2;
+    margin-bottom: 20px;
+}
+
+.registration-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    text-align: left;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="password"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: #4a90e2;
+    outline: none;
+}
+
+button {
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4a90e2;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+    background-color: #357abd;
+    transform: scale(1.05);
+}
+
+p {
+    margin-top: 15px;
+}
+
+a {
+    color: #4a90e2;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

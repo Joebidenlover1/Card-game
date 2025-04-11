@@ -8,7 +8,27 @@
 </head>
 <body>
 
+<div id="navbar">
+  <div id="hamburger" onclick="toggleNav()">
+    <div class="line"></div>
+    <div class="line"></div>
+    <div class="line"></div>
+  </div>
+  <div id="nav-menu">
+    <ul>
+      <a href="about.html">About</a>
+      <a href="login.html">Login</a>
+    </ul>
+  </div>
+</div>
+
 <h1>Mystic Geheimen</h1>
+
+<!-- Score Display -->
+<div id="score-display">
+  <h2>Score: <span id="score-count">0</span></h2>
+</div>
+
 <div id="health-bar">
   <p>Speler Gezondheid: <span id="player-health-count">20</span></p>
   <div id="player-health-bar" class="health-bar">
@@ -18,14 +38,15 @@
 
 <div id="player-hand"></div>
 <div class="mana">Mana: <span id="mana-count">0</span></div>
+
 <button id="end-turn">Einde Beurt</button>
 
-
-<div id="ai-health-bar" class="health-bar" >
+<div id="ai-health-bar" class="health-bar">
   <p>A.I. Gezondheid: <span id="ai-health-count">20</span></p>
   <div id="ai-health" class="health ai-health-green"></div>
 </div>
 
 <script src="script.js"></script>
+
 </body>
 </html>

@@ -1,10 +1,13 @@
-let mana = 2;
+let mana = 3;
+let aiMana = 3;
 let playerHand = [];
 let playerHealth = 20;
 let aiHealth = 20;
+let aiHand = [];
 let shieldActive = false;
 let temporaryHealth = 0;
-let fireImmunityRounds = 0; 
+let fireImmunityRounds = 0;
+let score = 0;
 
 class Card {
     constructor(name, type, cost, rarity, image) {
@@ -38,14 +41,31 @@ class ArtifactCard extends Card {
     }
 }
 
+function enhanceRandomCreature() {
+    const creatureCards = playerHand.filter(card => card instanceof CreatureCard);
+    if (creatureCards.length > 0) {
+        const randomCard = creatureCards[Math.floor(Math.random() * creatureCards.length)];
+        randomCard.attack += 1;
+        const cardDiv = document.querySelector(`.card.${randomCard.rarity.toLowerCase()}`);
+        if (cardDiv) {
+            cardDiv.classList.add('glow');
+            setTimeout(() => {
+                cardDiv.classList.remove('glow');
+            }, 2000);
+        }
+        alert(`${randomCard.name} heeft nu +1 schade!`);
+    }
+}
+
 const cards = [
-    new CreatureCard("Drakenridder", 5, 6, 5, "Legendary", "6.jpg"),
+    new CreatureCard("Drakenridder", 5, 7, 5, "Legendary", "6.jpg"),
     new SpellCard("Vuurbal", 3, 4, "Rare", "2.jpg"),
-    new ArtifactCard("Green Elixer", 2, "Verdubbelt de mana per beurt.", "Common", "3.jpg"),
-    new CreatureCard("Hog Rider", 3, 2, 2, "Epic", "1.jpg"),
+    new ArtifactCard("Green Elixer", 1, "Verdubbelt de mana per beurt.", "Common", "3.jpg"),
+    new CreatureCard("Hog Rider", 3, 4, 2, "Epic", "1.jpg"),
     new ArtifactCard("Shield", 2, "Geeft 5 tijdelijke gezondheid en biedt immuniteit.", "Common", "4.jpg"),
     new ArtifactCard("Chicken Wing", 1, "Geeft +2 schade aan Hog Rider als deze wordt gespeeld.", "Common", "7.jpg"),
-    new ArtifactCard("Anti Fire Potion", 2, "Geeft immuniteit tegen Vuurbal en Drakenridder voor 2 rondes.", "Rare", "8.jpg")
+    new ArtifactCard("Anti Fire Potion", 2, "Geeft immuniteit tegen Vuurbal en Drakenridder voor 2 rondes.", "Rare", "8.jpg"),
+    new CreatureCard("Knight", 2, 3, 4, "Common", "9.jpg"),
 ];
 
 function updateManaDisplay() {
@@ -59,9 +79,22 @@ function updateHealthDisplay() {
     document.getElementById("ai-health").style.width = (aiHealth / 20) * 100 + "%";
 }
 
+function updateScoreDisplay() {
+    document.getElementById("score-count").innerText = score;
+}
+
 function drawCards() {
     playerHand = [...cards];
     displayHand();
+}
+
+function toggleNav() {
+    const navMenu = document.getElementById("nav-menu");
+    if (navMenu.style.display === "none" || navMenu.style.display === "") {
+        navMenu.style.display = "block";
+    } else {
+        navMenu.style.display = "none";
+    }
 }
 
 function displayHand() {
@@ -128,14 +161,17 @@ function playCard(index) {
 
         if (card instanceof CreatureCard) {
             aiHealth -= card.attack;
+            score += card.attack;
             alert(`${card.name} doet ${card.attack} schade aan de AI!`);
         } else if (card instanceof SpellCard) {
             aiHealth -= card.damage;
+            score += card.damage;
             alert(`${card.name} doet ${card.damage} schade aan de AI!`);
         }
 
         if (aiHealth <= 0) {
-            alert("De AI is verslagen!");
+            score += 50;
+            alert("De AI is verslagen! Je krijgt 50 punten.");
             resetGame();
             return;
         }
@@ -147,6 +183,7 @@ function playCard(index) {
     playerHand.splice(index, 1);
     updateManaDisplay();
     updateHealthDisplay();
+    updateScoreDisplay();
     displayHand();
 }
 
@@ -156,23 +193,28 @@ function applyDamageToPlayer(damage) {
         shieldActive = false;
     } else if (fireImmunityRounds > 0) {
         alert("Je hebt immuniteit tegen deze aanval!");
-        fireImmunityRounds--; // Decrease immunity rounds
+        fireImmunityRounds--;
     } else {
         playerHealth -= damage;
+        score -= damage;
     }
     updateHealthDisplay();
+    updateScoreDisplay();
 }
 
 function resetGame() {
     mana = 2;
+    aiMana = 3;
     playerHealth = 20;
     aiHealth = 20;
     shieldActive = false;
     temporaryHealth = 0;
     fireImmunityRounds = 0;
     drawCards();
+    drawAiCards();
     updateManaDisplay();
     updateHealthDisplay();
+    updateScoreDisplay();
 }
 
 document.getElementById("end-turn").addEventListener("click", endTurn);
@@ -181,19 +223,50 @@ function endTurn() {
     shieldActive = false;
     temporaryHealth = 0;
     mana += 2;
+    aiMana += 2;
     updateManaDisplay();
+    drawCards();
     aiTurn();
+    enhanceRandomCreature();
     updateHealthDisplay();
 }
 
 function aiTurn() {
     if (aiHealth > 0) {
-        const damage = 3;
-        applyDamageToPlayer(damage);
-        alert(`De AI doet ${damage} schade aan jou!`);
+        const playableCards = aiHand.filter(card => aiMana >= card.cost);
+        if (playableCards.length > 0) {
+            const cardToPlay = playableCards.reduce((prev, current) => {
+                return (prev instanceof CreatureCard && current instanceof CreatureCard && prev.attack > current.attack) ? prev : current;
+            });
+
+            aiMana -= cardToPlay.cost;
+            alert(`De AI speelt ${cardToPlay.name}!`);
+
+            if (cardToPlay instanceof CreatureCard) {
+                applyDamageToPlayer(cardToPlay.attack);
+            } else if (cardToPlay instanceof SpellCard) {
+                applyDamageToPlayer(cardToPlay.damage);
+            }
+
+            aiHand.splice(aiHand.indexOf(cardToPlay), 1);
+        } else {
+            alert("De AI heeft geen kaarten om te spelen!");
+        }
+
+        if (playerHealth <= 0) {
+            alert("Je bent verslagen door de AI!");
+            resetGame();
+            return;
+        }
     }
+}
+
+function drawAiCards() {
+    aiHand = [...cards];
 }
 
 updateManaDisplay();
 drawCards();
+drawAiCards();
 updateHealthDisplay();
+updateScoreDisplay();

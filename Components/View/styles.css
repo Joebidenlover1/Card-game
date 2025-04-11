@@ -1,6 +1,7 @@
 body {
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(to right, #d0e9ff, #e0e0e0);
+    background: url('best-greek-mythology-9tlb3r6i5cjgnuqk.jpg') no-repeat center center fixed;
+    background-size: cover;
     margin: 0;
     padding: 20px;
     text-align: center;
@@ -8,11 +9,103 @@ body {
 }
 
 h1 {
-    color: #4a90e2;
+    color: black;
     font-size: 2.5em;
     margin-bottom: 20px;
 }
 
+#navbar {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px;
+    background-color: #4a90e2;
+}
+.glow {
+    animation: glow 1000.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px rgba(255, 255, 0, 0.5), 0 0 10px rgba(255, 255, 0, 0.4);
+    }
+
+    100% {
+        box-shadow: 0 0 15px rgba(255, 255, 0, 0.8), 0 0 30px rgba(255, 255, 0, 0.6);
+    }
+}
+#hamburger {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 30px;
+}
+
+.line {
+    width: 100%;
+    height: 4px;
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+
+#navbar {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px;
+    background-color: transparent;
+}
+
+#hamburger {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 30px;
+}
+
+.line {
+    width: 100%;
+    height: 4px;
+    background-color: #333;
+    transition: all 0.3s ease;
+}
+
+#nav-menu {
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    z-index: 1000;
+    display: none;
+}
+
+#nav-menu ul {
+    list-style-type: none;
+    padding: 10px;
+    margin: 0;
+}
+
+#nav-menu li {
+    padding: 10px 20px;
+}
+
+#nav-menu li a {
+    text-decoration: none;
+    color: #333;
+}
+
+#nav-menu a:hover {
+    background-color: #f0f0f0;
+}
 #health-bar {
     margin: 20px 0;
 }
@@ -26,15 +119,15 @@ h1 {
 
 .health {
     height: 100%;
-    background-color: #4caf50; /* green color for player's health */
-    width: 100%; /* starts as full width */
+    background-color: #4caf50;
+    width: 100%;
     border-radius: 5px;
 }
 
 #ai-health {
     height: 100%;
-    background-color: #f44336; /* red color for AI's health */
-    width: 100%; /* starts as full width */
+    background-color: #f44336;
+    width: 100%;
     border-radius: 5px;
 }
 
@@ -43,6 +136,9 @@ h1 {
     justify-content: center;
     flex-wrap: wrap;
     margin: 20px 0;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
 }
 
 .card {

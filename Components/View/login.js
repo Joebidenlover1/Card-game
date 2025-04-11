@@ -9,7 +9,7 @@ function attemptLogin() {
         return;
     }
 
-    fetch("http://localhost:63342/htdocs/Card-game/Components/View/login.html", {
+    fetch("../Controller/authentication.php", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"

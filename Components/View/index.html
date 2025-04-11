@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mystic Geheimen</title>
   <link rel="stylesheet" href="styles.css">
+  <script>
+    if (localStorage.getItem('loggedIn') !== 'true') {
+      window.location.href = 'register.html';
+    }
+  </script>
+
 </head>
 <body>
 
@@ -13,20 +19,30 @@
     <div class="line"></div>
     <div class="line"></div>
     <div class="line"></div>
+    <button onclick="logout()">Logout</button>
+
+    <script>
+      function logout() {
+        localStorage.setItem('loggedIn', 'false');
+        window.location.href = 'index.html';
+      }
+    </script>
+
   </div>
   <div id="nav-menu">
     <ul>
       <a href="about.html">About</a>
       <a href="login.html">Login</a>
+      <a href="register.html">Registratie</a>
     </ul>
   </div>
 </div>
 
 <h1>Mystic Geheimen</h1>
 
-<!-- Score Display -->
-<div id="score-display">
+<div id="player-info">
   <h2>Score: <span id="score-count">0</span></h2>
+  <h2>Level: <span id="level-count">1</span></h2>
 </div>
 
 <div id="health-bar">
@@ -40,6 +56,8 @@
 <div class="mana">Mana: <span id="mana-count">0</span></div>
 
 <button id="end-turn">Einde Beurt</button>
+<button id="reset-game">Reset Spel</button>
+
 
 <div id="ai-health-bar" class="health-bar">
   <p>A.I. Gezondheid: <span id="ai-health-count">20</span></p>

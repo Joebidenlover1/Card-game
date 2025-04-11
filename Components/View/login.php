@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (password_verify($password, $hashedPassword)) {
         $_SESSION['username'] = $username;
-        header("Location: index.html"); // Redirect to the game
+        header("Location: index.php"); // Redirect to the game
         exit(); // Ensure no further code is executed
     } else {
         echo "Invalid credentials.";

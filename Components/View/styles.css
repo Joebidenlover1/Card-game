@@ -140,6 +140,12 @@ h1 {
     padding: 20px;
     border-radius: 10px;
 }
+#player-info {
+    display: flex;
+    justify-content: center;
+    gap: 40px; /* space between Score and Level */
+    margin: 20px 0;
+}
 
 .card {
     width: 120px;

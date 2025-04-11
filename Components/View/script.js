@@ -2,12 +2,19 @@ let mana = 3;
 let aiMana = 3;
 let playerHand = [];
 let playerHealth = 20;
-let aiHealth = 20;
+let aiHealth = 18;
 let aiHand = [];
 let shieldActive = false;
 let temporaryHealth = 0;
 let fireImmunityRounds = 0;
-let score = 0;
+let score = parseInt(localStorage.getItem("playerScore")) || 0;
+let playerLevel = parseInt(localStorage.getItem("playerLevel")) || 1;
+
+let levelRequirements = {
+    1: 100,
+    2: 250,
+    3: 400
+};
 
 class Card {
     constructor(name, type, cost, rarity, image) {
@@ -20,10 +27,9 @@ class Card {
 }
 
 class CreatureCard extends Card {
-    constructor(name, cost, attack, health, rarity, image) {
+    constructor(name, cost, attack, rarity, image) {
         super(name, "wezen", cost, rarity, image);
         this.attack = attack;
-        this.health = health;
     }
 }
 
@@ -41,32 +47,50 @@ class ArtifactCard extends Card {
     }
 }
 
-function enhanceRandomCreature() {
-    const creatureCards = playerHand.filter(card => card instanceof CreatureCard);
-    if (creatureCards.length > 0) {
-        const randomCard = creatureCards[Math.floor(Math.random() * creatureCards.length)];
-        randomCard.attack += 1;
-        const cardDiv = document.querySelector(`.card.${randomCard.rarity.toLowerCase()}`);
-        if (cardDiv) {
-            cardDiv.classList.add('glow');
-            setTimeout(() => {
-                cardDiv.classList.remove('glow');
-            }, 2000);
-        }
-        alert(`${randomCard.name} heeft nu +1 schade!`);
-    }
-}
-
 const cards = [
-    new CreatureCard("Drakenridder", 5, 7, 5, "Legendary", "6.jpg"),
+    new CreatureCard("Drakenridder", 5, 7, "Legendary", "6.jpg"),
     new SpellCard("Vuurbal", 3, 4, "Rare", "2.jpg"),
     new ArtifactCard("Green Elixer", 1, "Verdubbelt de mana per beurt.", "Common", "3.jpg"),
-    new CreatureCard("Hog Rider", 3, 4, 2, "Epic", "1.jpg"),
+    new CreatureCard("Hog Rider", 3, 4, "Epic", "1.jpg"),
     new ArtifactCard("Shield", 2, "Geeft 5 tijdelijke gezondheid en biedt immuniteit.", "Common", "4.jpg"),
     new ArtifactCard("Chicken Wing", 1, "Geeft +2 schade aan Hog Rider als deze wordt gespeeld.", "Common", "7.jpg"),
     new ArtifactCard("Anti Fire Potion", 2, "Geeft immuniteit tegen Vuurbal en Drakenridder voor 2 rondes.", "Rare", "8.jpg"),
-    new CreatureCard("Knight", 2, 3, 4, "Common", "9.jpg"),
+    new CreatureCard("Knight", 2, 3, "Common", "9.jpg"),
 ];
+
+// Extra kaarten (zoals de draak) terughalen
+let savedExtraCards = JSON.parse(localStorage.getItem("extraCards")) || [];
+savedExtraCards.forEach(extraCard => cards.push(Object.assign(new CreatureCard(), extraCard)));
+
+function levelUp() {
+    const requiredPoints = levelRequirements[playerLevel];
+    if (score >= requiredPoints) {
+        playerLevel++;
+        localStorage.setItem("playerLevel", playerLevel);
+        alert(`Gefeliciteerd! Je bent nu niveau ${playerLevel}!`);
+
+        if (playerLevel === 2) {
+            score += 100;
+            localStorage.setItem("playerScore", score);
+            alert("Je hebt 100 extra punten gekregen!");
+
+            const newCard = new CreatureCard("Gouden Draak", 10, 17, "Legendary", "10.jpg");
+            cards.push(newCard);
+
+            // Sla nieuwe kaart op in localStorage
+            savedExtraCards.push(newCard);
+            localStorage.setItem("extraCards", JSON.stringify(savedExtraCards));
+
+            alert("Je hebt een nieuwe kaart ontvangen: Gouden Draak!");
+        }
+
+        updateLevelDisplay();
+    }
+}
+
+function updateLevelDisplay() {
+    document.getElementById("level-count").innerText = playerLevel;
+}
 
 function updateManaDisplay() {
     document.getElementById("mana-count").innerText = mana;
@@ -90,11 +114,7 @@ function drawCards() {
 
 function toggleNav() {
     const navMenu = document.getElementById("nav-menu");
-    if (navMenu.style.display === "none" || navMenu.style.display === "") {
-        navMenu.style.display = "block";
-    } else {
-        navMenu.style.display = "none";
-    }
+    navMenu.style.display = (navMenu.style.display === "none" || navMenu.style.display === "") ? "block" : "none";
 }
 
 function displayHand() {
@@ -135,22 +155,30 @@ function playCard(index) {
             mana -= card.cost;
             shieldActive = true;
             temporaryHealth += 5;
-            alert(card.name + " gespeeld! Je krijgt 5 tijdelijke gezondheid en biedt immuniteit.");
+            alert(card.name + " gespeeld! Je krijgt 5 tijdelijke gezondheid.");
         } else {
             alert("Niet genoeg mana om Shield te spelen!");
             return;
         }
     } else if (card instanceof ArtifactCard && card.name === "Chicken Wing") {
-        const hogRider = playerHand.find(c => c.name === "Hog Rider");
-        if (hogRider) {
-            hogRider.attack += 2;
-            alert(`${card.name} gespeeld! Hog Rider krijgt +2 schade.`);
+        if (mana >= card.cost) {
+            mana -= card.cost;
+            const hogRider = playerHand.find(c => c.name === "Hog Rider");
+            if (hogRider) {
+                hogRider.attack += 2;
+                alert(`${card.name} gespeeld! Hog Rider krijgt +2 schade.`);
+            } else {
+                alert(`${card.name} gespeeld, maar er is geen Hog Rider in je hand.`);
+            }
+        } else {
+            alert("Niet genoeg mana om Chicken Wing te spelen!");
+            return;
         }
     } else if (card instanceof ArtifactCard && card.name === "Anti Fire Potion") {
         if (mana >= card.cost) {
             mana -= card.cost;
             fireImmunityRounds = 2;
-            alert(`${card.name} gespeeld! Je hebt immuniteit tegen Vuurbal en Drakenridder voor 2 rondes.`);
+            alert(`${card.name} gespeeld! Immuniteit voor 2 rondes.`);
         } else {
             alert("Niet genoeg mana om Anti Fire Potion te spelen!");
             return;
@@ -162,16 +190,17 @@ function playCard(index) {
         if (card instanceof CreatureCard) {
             aiHealth -= card.attack;
             score += card.attack;
-            alert(`${card.name} doet ${card.attack} schade aan de AI!`);
+            alert(`${card.name} doet ${card.attack} schade!`);
         } else if (card instanceof SpellCard) {
             aiHealth -= card.damage;
             score += card.damage;
-            alert(`${card.name} doet ${card.damage} schade aan de AI!`);
+            alert(`${card.name} doet ${card.damage} schade!`);
         }
 
         if (aiHealth <= 0) {
             score += 50;
-            alert("De AI is verslagen! Je krijgt 50 punten.");
+            alert("De AI is verslagen! +50 punten.");
+            levelUp();
             resetGame();
             return;
         }
@@ -181,6 +210,7 @@ function playCard(index) {
     }
 
     playerHand.splice(index, 1);
+    localStorage.setItem("playerScore", score);
     updateManaDisplay();
     updateHealthDisplay();
     updateScoreDisplay();
@@ -217,9 +247,76 @@ function resetGame() {
     updateScoreDisplay();
 }
 
-document.getElementById("end-turn").addEventListener("click", endTurn);
+function hardResetGame() {
+    if (confirm("Weet je zeker dat je je spel wilt resetten? Alles gaat verloren.")) {
+        mana = 2;
+        aiMana = 3;
+        playerHealth = 20;
+        aiHealth = 20;
+        score = 0;
+        playerLevel = 1;
+        shieldActive = false;
+        temporaryHealth = 0;
+        fireImmunityRounds = 0;
 
-function endTurn() {
+        localStorage.removeItem("playerScore");
+        localStorage.removeItem("playerLevel");
+        localStorage.removeItem("extraCards");
+
+        playerHand = [];
+        aiHand = [];
+        drawCards();
+        drawAiCards();
+
+        updateManaDisplay();
+        updateHealthDisplay();
+        updateScoreDisplay();
+        updateLevelDisplay();
+
+        alert("Spel volledig gereset!");
+    }
+}
+
+function enhanceRandomCreature() {
+    const creatureCards = playerHand.filter(card => card instanceof CreatureCard);
+    if (creatureCards.length > 0) {
+        const randomCard = creatureCards[Math.floor(Math.random() * creatureCards.length)];
+        randomCard.attack += 1;
+        alert(`${randomCard.name} krijgt +1 schade!`);
+    }
+}
+
+function aiTurn() {
+    if (aiHealth > 0) {
+        const playableCards = aiHand.filter(card => aiMana >= card.cost);
+        if (playableCards.length > 0) {
+            const randomCard = playableCards[Math.floor(Math.random() * playableCards.length)];
+            aiMana -= randomCard.cost;
+            alert(`De AI speelt ${randomCard.name}!`);
+
+            if (randomCard instanceof CreatureCard) {
+                applyDamageToPlayer(randomCard.attack);
+            } else if (randomCard instanceof SpellCard) {
+                applyDamageToPlayer(randomCard.damage);
+            }
+
+            aiHand.splice(aiHand.indexOf(randomCard), 1);
+        } else {
+            alert("De AI heeft geen kaarten om te spelen!");
+        }
+
+        if (playerHealth <= 0) {
+            alert("Je bent verslagen!");
+            resetGame();
+        }
+    }
+}
+
+function drawAiCards() {
+    aiHand = [...cards];
+}
+
+document.getElementById("end-turn").addEventListener("click", () => {
     shieldActive = false;
     temporaryHealth = 0;
     mana += 2;
@@ -229,44 +326,14 @@ function endTurn() {
     aiTurn();
     enhanceRandomCreature();
     updateHealthDisplay();
-}
+});
 
-function aiTurn() {
-    if (aiHealth > 0) {
-        const playableCards = aiHand.filter(card => aiMana >= card.cost);
-        if (playableCards.length > 0) {
-            const cardToPlay = playableCards.reduce((prev, current) => {
-                return (prev instanceof CreatureCard && current instanceof CreatureCard && prev.attack > current.attack) ? prev : current;
-            });
+document.getElementById("reset-game").addEventListener("click", hardResetGame);
 
-            aiMana -= cardToPlay.cost;
-            alert(`De AI speelt ${cardToPlay.name}!`);
-
-            if (cardToPlay instanceof CreatureCard) {
-                applyDamageToPlayer(cardToPlay.attack);
-            } else if (cardToPlay instanceof SpellCard) {
-                applyDamageToPlayer(cardToPlay.damage);
-            }
-
-            aiHand.splice(aiHand.indexOf(cardToPlay), 1);
-        } else {
-            alert("De AI heeft geen kaarten om te spelen!");
-        }
-
-        if (playerHealth <= 0) {
-            alert("Je bent verslagen door de AI!");
-            resetGame();
-            return;
-        }
-    }
-}
-
-function drawAiCards() {
-    aiHand = [...cards];
-}
-
+// INIT
 updateManaDisplay();
 drawCards();
 drawAiCards();
 updateHealthDisplay();
 updateScoreDisplay();
+updateLevelDisplay();
